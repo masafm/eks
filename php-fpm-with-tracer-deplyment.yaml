@@ -1,0 +1,45 @@
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: php-fpm-with-tracer-deplyment
+  labels:
+    app: php-fpm-with-tracer-deplyment
+spec:
+  selector:
+    matchLabels:
+      app: php-fpm-with-tracer-deplyment
+      tier: frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: php-fpm-with-tracer-deplyment
+        tier: frontend
+    spec:
+      containers:
+      - image: public.ecr.aws/b1o7r7e0/masafumi-kashiwagi:php-fpm-with-tracer
+        name: php-fpm-with-tracer
+        env:
+        - name: DD_AGENT_HOST
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        ports:
+        - containerPort: 9000
+          name: php-fpm
+      - image: public.ecr.aws/b1o7r7e0/masafumi-kashiwagi:nginx
+        name: nginx
+        env:
+        - name: NGINX_ENV
+          value: test
+        ports:
+        - containerPort: 80
+          name: nginx
+      - image: public.ecr.aws/b1o7r7e0/masafumi-kashiwagi:apache-bench
+        name: apache-bench
+        env:
+        - name: AB_CONCURRENCY
+          value: "4"
+        - name: AB_REQUESTS
+          value: "100000"
