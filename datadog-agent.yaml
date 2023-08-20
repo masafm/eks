@@ -20,6 +20,10 @@ spec:
       enabled: true
       hostPortConfig:
         enabled: true
+    liveContainerCollection:
+      enabled: true
+    liveProcessCollection:
+      enabled: true
   override:
     clusterAgent:
       image:
