@@ -28,7 +28,7 @@ spec:
         - name: DD_ENV
           value: with-ddtracer-and-newrelic
         - name: CURL_COUNT
-          value: "1"
+          value: "20"
         ports:
         - containerPort: 9000
           name: php-fpm

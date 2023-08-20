@@ -22,7 +22,7 @@ spec:
         name: php-fpm-without-tracer
         env:
         - name: CURL_COUNT
-          value: "1"
+          value: "20"
         ports:
         - containerPort: 9000
           name: php-fpm
