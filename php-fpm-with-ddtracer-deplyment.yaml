@@ -18,7 +18,7 @@ spec:
         tier: frontend
     spec:
       containers:
-      - image: public.ecr.aws/b1o7r7e0/masafumi.kashiwagi/php-fpm:with-ddtracer-2
+      - image: public.ecr.aws/b1o7r7e0/masafumi.kashiwagi/php-fpm:with-ddtracer-3
         name: php-fpm-with-ddtracer
         env:
         - name: DD_AGENT_HOST
