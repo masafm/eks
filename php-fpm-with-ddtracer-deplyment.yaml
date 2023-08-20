@@ -1,25 +1,25 @@
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: php-fpm-with-tracer-deplyment
+  name: php-fpm-with-ddtracer-deplyment
   labels:
-    app: php-fpm-with-tracer-deplyment
+    app: php-fpm-with-ddtracer-deplyment
 spec:
   selector:
     matchLabels:
-      app: php-fpm-with-tracer-deplyment
+      app: php-fpm-with-ddtracer-deplyment
       tier: frontend
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: php-fpm-with-tracer-deplyment
+        app: php-fpm-with-ddtracer-deplyment
         tier: frontend
     spec:
       containers:
-      - image: public.ecr.aws/b1o7r7e0/masafumi-kashiwagi:php-fpm-with-tracer
-        name: php-fpm-with-tracer
+      - image: public.ecr.aws/b1o7r7e0/masafumi.kashiwagi/php-fpm:with-ddtracer
+        name: php-fpm-with-ddtracer
         env:
         - name: DD_AGENT_HOST
           valueFrom:
@@ -28,15 +28,14 @@ spec:
         ports:
         - containerPort: 9000
           name: php-fpm
-      - image: public.ecr.aws/b1o7r7e0/masafumi-kashiwagi:nginx
+      - image: public.ecr.aws/b1o7r7e0/masafumi.kashiwagi/nginx:1
         name: nginx
-        env:
-        - name: NGINX_ENV
-          value: test
         ports:
         - containerPort: 80
           name: nginx
-      - image: public.ecr.aws/b1o7r7e0/masafumi-kashiwagi:apache-bench
+        - containerPort: 81
+          name: nginx-status
+      - image: public.ecr.aws/b1o7r7e0/masafumi.kashiwagi/apache-bench:1
         name: apache-bench
         env:
         - name: AB_CONCURRENCY

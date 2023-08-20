@@ -1,25 +1,30 @@
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: php-fpm-without-tracer-deplyment
+  name: php-fpm-with-ddtracer-and-newrelic-deplyment
   labels:
-    app: php-fpm-without-tracer-deplyment
+    app: php-fpm-with-ddtracer-and-newrelic-deplyment
 spec:
   selector:
     matchLabels:
-      app: php-fpm-without-tracer-deplyment
+      app: php-fpm-with-ddtracer-and-newrelic-deplyment
       tier: frontend
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: php-fpm-without-tracer-deplyment
+        app: php-fpm-with-ddtracer-and-newrelic-deplyment
         tier: frontend
     spec:
       containers:
-      - image: public.ecr.aws/b1o7r7e0/masafumi.kashiwagi/php-fpm:without-tracer
-        name: php-fpm-without-tracer
+      - image: public.ecr.aws/b1o7r7e0/masafumi.kashiwagi/php-fpm:with-ddtracer-and-newrelic
+        name: php-fpm-with-ddtracer-and-newrelic
+        env:
+        - name: DD_AGENT_HOST
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
         ports:
         - containerPort: 9000
           name: php-fpm
