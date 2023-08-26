@@ -12,6 +12,8 @@ spec:
       appSecret:
         secretName: datadog-secret
         keyName: app-key
+    kubelet:
+      tlsVerify: false
   features:
     logCollection:
       enabled: true
