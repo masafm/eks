@@ -18,8 +18,11 @@ spec:
         tier: frontend
     spec:
       containers:
-      - image: public.ecr.aws/b1o7r7e0/masafumi.kashiwagi/php-fpm:without-tracer
+      - image: public.ecr.aws/b1o7r7e0/masafumi.kashiwagi/php-fpm:without-tracer-4
         name: php-fpm-without-tracer
+        env:
+        - name: CURL_COUNT
+          value: "20"
         ports:
         - containerPort: 9000
           name: php-fpm
