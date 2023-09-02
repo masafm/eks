@@ -29,16 +29,16 @@ managedNodeGroups:
       allow: true 
       publicKeyName: masafumi.kashiwagi
       
-  # Windows
-  - name: windows-ng
-    amiFamily: WindowsServer2019FullContainer
-    minSize: 0
-    maxSize: 1
+#  # Windows
+#  - name: windows-ng
+#    amiFamily: WindowsServer2019FullContainer
+#    minSize: 0
+#    maxSize: 1
 
-# Fargate
-fargateProfiles:
-  - name: fp-default
-    selectors:
-      # All workloads in the "fargate" Kubernetes namespace will be
-      # scheduled onto Fargate
-      - namespace: fargate
+# # Fargate
+# fargateProfiles:
+#  - name: fp-default
+#    selectors:
+#      # All workloads in the "fargate" Kubernetes namespace will be
+#      # scheduled onto Fargate
+#      - namespace: fargate
