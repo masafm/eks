@@ -4,6 +4,7 @@ metadata:
   name: datadog
 spec:
   global:
+    clusterName: microk8s-cluster
     site: datadoghq.com
     credentials:
       apiSecret:
@@ -15,6 +16,9 @@ spec:
     kubelet:
       tlsVerify: false
   features:
+    clusterChecks:
+      enabled: true
+      useClusterChecksRunners: true
     logCollection:
       enabled: true
       containerCollectAll: true
@@ -44,10 +48,6 @@ spec:
               cpu: "0.5"
               memory: 1Gi
           env:
-            - name: DD_CLUSTER_NAME
-              value: microk8s-cluster
-            - name: DD_TAGS
-              value: "kube_cluster_name:microk8s-cluster"
             - name: DD_LOG_LEVEL
               value: "debug"
             - name: DD_LOG_PAYLOADS
@@ -65,10 +65,6 @@ spec:
               cpu: "0.5"
               memory: 1Gi
           env:
-            - name: DD_CLUSTER_NAME
-              value: microk8s-cluster
-            - name: DD_TAGS
-              value: "kube_cluster_name:microk8s-cluster"
             - name: DD_LOG_LEVEL
               value: "debug"
             - name: DD_LOG_PAYLOADS
@@ -82,10 +78,6 @@ spec:
               cpu: "0.5"
               memory: 1Gi
           env:
-            - name: DD_CLUSTER_NAME
-              value: microk8s-cluster
-            - name: DD_TAGS
-              value: "kube_cluster_name:microk8s-cluster"
             - name: DD_LOG_LEVEL
               value: "debug"
             - name: DD_LOG_PAYLOADS
@@ -99,10 +91,6 @@ spec:
               cpu: "0.5"
               memory: 1Gi
           env:
-            - name: DD_CLUSTER_NAME
-              value: microk8s-cluster
-            - name: DD_TAGS
-              value: "kube_cluster_name:microk8s-cluster"
             - name: DD_LOG_LEVEL
               value: "debug"
             - name: DD_LOG_PAYLOADS
@@ -116,10 +104,6 @@ spec:
               cpu: "0.5"
               memory: 1Gi
           env:
-            - name: DD_CLUSTER_NAME
-              value: microk8s-cluster
-            - name: DD_TAGS
-              value: "kube_cluster_name:microk8s-cluster"
             - name: DD_LOG_LEVEL
               value: "debug"
             - name: DD_LOG_PAYLOADS
