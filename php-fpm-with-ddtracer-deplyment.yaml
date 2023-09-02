@@ -20,6 +20,13 @@ spec:
       containers:
       - image: public.ecr.aws/b1o7r7e0/masafumi.kashiwagi/php-fpm:with-ddtracer-4
         name: php-fpm-with-ddtracer
+        resources:
+            limits:
+              cpu: "0.5"
+              memory: 512Mi
+            requests:
+              cpu: "0.5"
+              memory: 512Mi
         env:
         - name: DD_AGENT_HOST
           valueFrom:
@@ -28,12 +35,19 @@ spec:
         - name: DD_ENV
           value: with-dd-tracer
         - name: CURL_COUNT
-          value: "20"
+          value: "2"
         ports:
         - containerPort: 9000
           name: php-fpm
       - image: public.ecr.aws/b1o7r7e0/masafumi.kashiwagi/nginx:1
         name: nginx
+        resources:
+            limits:
+              cpu: "0.5"
+              memory: 512Mi
+            requests:
+              cpu: "0.5"
+              memory: 512Mi
         ports:
         - containerPort: 80
           name: nginx
@@ -41,8 +55,15 @@ spec:
           name: nginx-status
       - image: public.ecr.aws/b1o7r7e0/masafumi.kashiwagi/apache-bench:1
         name: apache-bench
+        resources:
+            limits:
+              cpu: "0.5"
+              memory: 512Mi
+            requests:
+              cpu: "0.5"
+              memory: 512Mi
         env:
         - name: AB_CONCURRENCY
-          value: "4"
+          value: "1"
         - name: AB_REQUESTS
           value: "100000"
