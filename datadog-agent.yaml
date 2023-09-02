@@ -5,6 +5,7 @@ metadata:
 spec:
   global:
     clusterName: microk8s-cluster
+    logLevel: debug
     site: datadoghq.com
     credentials:
       apiSecret:
@@ -18,7 +19,6 @@ spec:
   features:
     clusterChecks:
       enabled: true
-      useClusterChecksRunners: true
     logCollection:
       enabled: true
       containerCollectAll: true
@@ -38,6 +38,53 @@ spec:
     clusterAgent:
       image:
         name: gcr.io/datadoghq/cluster-agent:latest
+      extraConfd:
+        configDataMap:
+          jmx.yaml: |-
+            cluster_check: true
+            init_config:
+              new_gc_metrics: true
+            instances:
+              - host: 192.168.0.100
+                port: 9012
+          http_check.yaml: |-
+            cluster_check: true
+            init_config:
+            instances:
+              - name: 192.168.0.100
+                url: https://192.168.0.100/
+                tls_verify: false
+          tomcat.yaml: |-
+            cluster_check: true
+            init_config:
+              is_jmx: true
+              collect_default_metrics: true
+              new_gc_metrics: true
+            instances:
+              - host: 192.168.0.100
+                port: 9013
+          snmp.yaml: |-
+            cluster_check: true
+            init_config:
+              loader: core
+              use_device_id_as_hostname: true
+            instances:
+              - ip_address: '192.168.0.1'
+                community_string: 'ciscoasa'
+                port: '161'
+              - ip_address: '192.168.0.2'
+                community_string: 'f5'
+                port: '161'
+#              - ip_address: '192.168.0.3'
+#                community_string: 'yamaha-rtx3500'
+#                port: '161'
+#                profile: 'yamaha'
+          apache.yaml: |-
+            cluster_check: true
+            init_config:
+            instances:
+              - apache_status_url: http://192.168.0.100/server-status?auto
+                disable_generic_tags: true
       containers:
         cluster-agent:
           resources:
@@ -48,13 +95,44 @@ spec:
               cpu: "0.5"
               memory: 1Gi
           env:
-            - name: DD_LOG_LEVEL
-              value: "debug"
             - name: DD_LOG_PAYLOADS
               value: "true"
     nodeAgent:
       image:
-        name: gcr.io/datadoghq/agent:latest
+        name: gcr.io/datadoghq/agent:latest-jmx
+      extraConfd:
+        configDataMap:
+          tomcat.yaml: |-
+            logs:
+              - type: file
+                path: /var/log/tomcat9/*.out
+                source: tomcat
+                service: tomcat
+              - type: file
+                path: /var/log/tomcat9/localhost.*.log
+                source: tomcat
+                service: tomcat
+              - type: file
+                path: /var/log/tomcat9/localhost_access_log.*.txt
+                source: tomcat
+                service: tomcat
+          apache.yaml: |-
+            logs:
+              - type: file
+                path: /var/log/apache2/access.log
+                source: apache
+                service: apache
+              - type: file
+                path: /var/log/apache2/error.log
+                source: apache
+                service: apache
+      volumes:
+        - name: tomcat-logs
+          hostPath:
+            path: /var/log/tomcat9
+        - name: apache-logs
+          hostPath:
+            path: /var/log/apache2
       containers:
         agent:
           resources:
@@ -64,9 +142,12 @@ spec:
             requests:
               cpu: "0.5"
               memory: 1Gi
+          volumeMounts:
+            - name: tomcat-logs
+              mountPath: /var/log/tomcat9
+            - name: apache-logs
+              mountPath: /var/log/apache2
           env:
-            - name: DD_LOG_LEVEL
-              value: "debug"
             - name: DD_LOG_PAYLOADS
               value: "true"
         trace-agent:
@@ -78,8 +159,6 @@ spec:
               cpu: "0.5"
               memory: 1Gi
           env:
-            - name: DD_LOG_LEVEL
-              value: "debug"
             - name: DD_LOG_PAYLOADS
               value: "true"
         process-agent:
@@ -91,8 +170,6 @@ spec:
               cpu: "0.5"
               memory: 1Gi
           env:
-            - name: DD_LOG_LEVEL
-              value: "debug"
             - name: DD_LOG_PAYLOADS
               value: "true"
         system-probe:
@@ -104,7 +181,5 @@ spec:
               cpu: "0.5"
               memory: 1Gi
           env:
-            - name: DD_LOG_LEVEL
-              value: "debug"
             - name: DD_LOG_PAYLOADS
               value: "true"
