@@ -35,6 +35,35 @@ spec:
           env:
             - name: DD_CLUSTER_NAME
               value: microk8s-cluster
+            - name: DD_LOG_LEVEL
+              value: "debug"
+            - name: DD_LOG_PAYLOADS
+              value: "true"
     nodeAgent:
       image:
         name: gcr.io/datadoghq/agent:latest
+      containers:
+        agent:
+          env:
+            - name: DD_TAGS
+              value: "kube_cluster_name:microk8s-cluster"
+            - name: DD_LOG_LEVEL
+              value: "debug"
+            - name: DD_LOG_PAYLOADS
+              value: "true"
+        process-agent:
+          env:
+            - name: DD_TAGS
+              value: "kube_cluster_name:microk8s-cluster"
+            - name: DD_LOG_LEVEL
+              value: "debug"
+            - name: DD_LOG_PAYLOADS
+              value: "true"
+        trace-agent:
+          env:
+            - name: DD_TAGS
+              value: "kube_cluster_name:microk8s-cluster"
+            - name: DD_LOG_LEVEL
+              value: "debug"
+            - name: DD_LOG_PAYLOADS
+              value: "true"
