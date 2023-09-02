@@ -30,6 +30,11 @@ spec:
     clusterAgent:
       image:
         name: gcr.io/datadoghq/cluster-agent:latest
+      containers:
+        cluster-agent:
+          env:
+            - name: DD_CLUSTER_NAME
+              value: microk8s-cluster
     nodeAgent:
       image:
         name: gcr.io/datadoghq/agent:latest
