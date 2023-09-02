@@ -26,15 +26,28 @@ spec:
       enabled: true
     liveProcessCollection:
       enabled: true
+    npm:
+      enabled: true
+      collectDNSStats: true
+      enableConntrack: true
   override:
     clusterAgent:
       image:
         name: gcr.io/datadoghq/cluster-agent:latest
       containers:
         cluster-agent:
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: "0.5"
+              memory: 1Gi
           env:
             - name: DD_CLUSTER_NAME
               value: microk8s-cluster
+            - name: DD_TAGS
+              value: "kube_cluster_name:microk8s-cluster"
             - name: DD_LOG_LEVEL
               value: "debug"
             - name: DD_LOG_PAYLOADS
@@ -44,15 +57,16 @@ spec:
         name: gcr.io/datadoghq/agent:latest
       containers:
         agent:
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: "0.5"
+              memory: 1Gi
           env:
-            - name: DD_TAGS
-              value: "kube_cluster_name:microk8s-cluster"
-            - name: DD_LOG_LEVEL
-              value: "debug"
-            - name: DD_LOG_PAYLOADS
-              value: "true"
-        process-agent:
-          env:
+            - name: DD_CLUSTER_NAME
+              value: microk8s-cluster
             - name: DD_TAGS
               value: "kube_cluster_name:microk8s-cluster"
             - name: DD_LOG_LEVEL
@@ -60,7 +74,50 @@ spec:
             - name: DD_LOG_PAYLOADS
               value: "true"
         trace-agent:
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: "0.5"
+              memory: 1Gi
           env:
+            - name: DD_CLUSTER_NAME
+              value: microk8s-cluster
+            - name: DD_TAGS
+              value: "kube_cluster_name:microk8s-cluster"
+            - name: DD_LOG_LEVEL
+              value: "debug"
+            - name: DD_LOG_PAYLOADS
+              value: "true"
+        process-agent:
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: "0.5"
+              memory: 1Gi
+          env:
+            - name: DD_CLUSTER_NAME
+              value: microk8s-cluster
+            - name: DD_TAGS
+              value: "kube_cluster_name:microk8s-cluster"
+            - name: DD_LOG_LEVEL
+              value: "debug"
+            - name: DD_LOG_PAYLOADS
+              value: "true"
+        system-probe:
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: "0.5"
+              memory: 1Gi
+          env:
+            - name: DD_CLUSTER_NAME
+              value: microk8s-cluster
             - name: DD_TAGS
               value: "kube_cluster_name:microk8s-cluster"
             - name: DD_LOG_LEVEL
