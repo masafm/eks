@@ -47,16 +47,16 @@ spec:
               loader: core
               use_device_id_as_hostname: true
             instances:
-              - ip_address: '192.168.0.1'
-                community_string: 'ciscoasa'
-                port: '161'
-              - ip_address: '192.168.0.2'
-                community_string: 'f5'
-                port: '161'
-              - ip_address: '192.168.0.3'
-                community_string: 'yamaha-rtx3500'
-                port: '161'
-                profile: 'yamaha'
+              - ip_address: "192.168.0.1"
+                community_string: "ciscoasa"
+                port: "161"
+              - ip_address: "192.168.0.2"
+                community_string: "f5"
+                port: "161"
+              - ip_address: "192.168.0.3"
+                community_string: "yamaha-rtx3500"
+                port: "161"
+                profile: "yamaha"
       containers:
         cluster-agent:
           resources:
