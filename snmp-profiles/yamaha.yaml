@@ -1,8 +1,0 @@
-# Generic profile for network devices
-#
-
-extends:
-  - _base.yaml
-  - _yamaha-if.yaml
-
-sysobjectid: 1.3.6.1.4.1.3375.*
