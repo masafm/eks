@@ -95,6 +95,8 @@ spec:
                 path: /host/var/log/syslog
                 source: syslog
                 service: syslog
+                tags:
+                  - timezone:jst
           tomcat.yaml: |-
             init_config:
               is_jmx: true
