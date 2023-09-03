@@ -100,39 +100,39 @@ spec:
     nodeAgent:
       image:
         name: gcr.io/datadoghq/agent:latest-jmx
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/agent: unconfined
+        container.apparmor.security.beta.kubernetes.io/process-agent: unconfined
       extraConfd:
         configDataMap:
           tomcat.yaml: |-
             logs:
               - type: file
-                path: /var/log/tomcat9/*.out
+                path: /host/var/log/tomcat9/*.out
                 source: tomcat
                 service: tomcat
               - type: file
-                path: /var/log/tomcat9/localhost.*.log
+                path: /host/var/log/tomcat9/localhost.*.log
                 source: tomcat
                 service: tomcat
               - type: file
-                path: /var/log/tomcat9/localhost_access_log.*.txt
+                path: /host/var/log/tomcat9/localhost_access_log.*.txt
                 source: tomcat
                 service: tomcat
           apache.yaml: |-
             logs:
               - type: file
-                path: /var/log/apache2/access.log
+                path: /host/var/log/apache2/access.log
                 source: apache
                 service: apache
               - type: file
-                path: /var/log/apache2/error.log
+                path: /host/var/log/apache2/error.log
                 source: apache
                 service: apache
       volumes:
-        - name: tomcat-logs
+        - name: hostlogs
           hostPath:
-            path: /var/log/tomcat9
-        - name: apache-logs
-          hostPath:
-            path: /var/log/apache2
+            path: /var/log
       containers:
         agent:
           resources:
@@ -143,10 +143,8 @@ spec:
               cpu: "0.5"
               memory: 1Gi
           volumeMounts:
-            - name: tomcat-logs
-              mountPath: /var/log/tomcat9
-            - name: apache-logs
-              mountPath: /var/log/apache2
+            - name: hostlogs
+              mountPath: /host/var/log
           env:
             - name: DD_LOG_PAYLOADS
               value: "true"
