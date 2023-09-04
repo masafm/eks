@@ -35,7 +35,9 @@ spec:
         - name: DD_ENV
           value: with-dd-tracer
         - name: DD_DOGSTATSD_URL
-          value: "192.168.32.100:8125"
+          value: "http://192.168.32.33:8125"
+        - name: DD_TRACE_AGENT_URL
+          value: "http://192.168.32.33:8126"
         - name: CURL_COUNT
           value: "2"
         ports:
