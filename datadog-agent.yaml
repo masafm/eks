@@ -44,24 +44,24 @@ spec:
     clusterAgent:
       image:
         name: gcr.io/datadoghq/cluster-agent:latest
-      # extraConfd:
-      #   configDataMap:
-      #     snmp.yaml: |-
-      #       cluster_check: true
-      #       init_config:
-      #         loader: core
-      #         use_device_id_as_hostname: true
-      #       instances:
-      #         - ip_address: "192.168.0.1"
-      #           community_string: "ciscoasa"
-      #           port: "161"
-      #         - ip_address: "192.168.0.2"
-      #           community_string: "f5"
-      #           port: "161"
-      #         - ip_address: "192.168.0.3"
-      #           community_string: "yamaha-rtx3500"
-      #           port: "161"
-      #           profile: "yamaha"
+      extraConfd:
+        configDataMap:
+          snmp.yaml: |-
+            cluster_check: true
+            init_config:
+              loader: core
+              use_device_id_as_hostname: true
+            instances:
+              - ip_address: "192.168.0.1"
+                community_string: "ciscoasa"
+                port: "161"
+              - ip_address: "192.168.0.2"
+                community_string: "f5"
+                port: "161"
+              - ip_address: "192.168.0.3"
+                community_string: "yamaha-rtx3500"
+                port: "161"
+                profile: "yamaha"
       containers:
         cluster-agent:
           resources:
@@ -80,63 +80,63 @@ spec:
       annotations:
         container.apparmor.security.beta.kubernetes.io/agent: unconfined
         container.apparmor.security.beta.kubernetes.io/process-agent: unconfined
-      # extraConfd:
-      #   configDataMap:
-      #     jmx.yaml: |-
-      #       init_config:
-      #         new_gc_metrics: true
-      #       instances:
-      #         - host: 192.168.0.100
-      #           port: 9012
-      #     http_check.yaml: |-
-      #       init_config:
-      #       instances:
-      #         - name: 192.168.0.100
-      #           url: https://192.168.0.100/
-      #           tls_verify: false
-      #     syslog.yaml: |-
-      #       logs:
-      #         - type: file
-      #           path: /host/var/log/syslog
-      #           source: syslog
-      #           service: syslog
-      #           tags:
-      #             - timezone:jst
-      #     tomcat.yaml: |-
-      #       init_config:
-      #         is_jmx: true
-      #         collect_default_metrics: true
-      #         new_gc_metrics: true
-      #       instances:
-      #         - host: 192.168.0.100
-      #           port: 9013
-      #       logs:
-      #         - type: file
-      #           path: /host/var/log/tomcat9/*.out
-      #           source: tomcat
-      #           service: tomcat
-      #         - type: file
-      #           path: /host/var/log/tomcat9/localhost.*.log
-      #           source: tomcat
-      #           service: tomcat
-      #         - type: file
-      #           path: /host/var/log/tomcat9/localhost_access_log.*.txt
-      #           source: tomcat
-      #           service: tomcat
-      #     apache.yaml: |-
-      #       init_config:
-      #       instances:
-      #         - apache_status_url: http://192.168.0.100/server-status?auto
-      #           disable_generic_tags: true
-      #       logs:
-      #         - type: file
-      #           path: /host/var/log/apache2/access.log
-      #           source: apache
-      #           service: apache
-      #         - type: file
-      #           path: /host/var/log/apache2/error.log
-      #           source: apache
-      #           service: apache
+      extraConfd:
+        configDataMap:
+          jmx.yaml: |-
+            init_config:
+              new_gc_metrics: true
+            instances:
+              - host: 192.168.0.100
+                port: 9012
+          http_check.yaml: |-
+            init_config:
+            instances:
+              - name: 192.168.0.100
+                url: https://192.168.0.100/
+                tls_verify: false
+          syslog.yaml: |-
+            logs:
+              - type: file
+                path: /host/var/log/syslog
+                source: syslog
+                service: syslog
+                tags:
+                  - timezone:jst
+          tomcat.yaml: |-
+            init_config:
+              is_jmx: true
+              collect_default_metrics: true
+              new_gc_metrics: true
+            instances:
+              - host: 192.168.0.100
+                port: 9013
+            logs:
+              - type: file
+                path: /host/var/log/tomcat9/*.out
+                source: tomcat
+                service: tomcat
+              - type: file
+                path: /host/var/log/tomcat9/localhost.*.log
+                source: tomcat
+                service: tomcat
+              - type: file
+                path: /host/var/log/tomcat9/localhost_access_log.*.txt
+                source: tomcat
+                service: tomcat
+          apache.yaml: |-
+            init_config:
+            instances:
+              - apache_status_url: http://192.168.0.100/server-status?auto
+                disable_generic_tags: true
+            logs:
+              - type: file
+                path: /host/var/log/apache2/access.log
+                source: apache
+                service: apache
+              - type: file
+                path: /host/var/log/apache2/error.log
+                source: apache
+                service: apache
       volumes:
         - name: host-logs
           hostPath:
