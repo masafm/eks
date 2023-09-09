@@ -5,7 +5,7 @@ metadata:
   namespace: openshift-operators # or openshift-operators depending on where the Datadog Operator was deployed
 spec:
   global:
-    clusterName: MasafumiKashiwagiARO
+    clusterName: masafumi-kashiwagi-aro
     credentials:
       apiSecret:
         keyName: api-key
