@@ -1,33 +1,37 @@
-kind: DatadogAgent
 apiVersion: datadoghq.com/v2alpha1
+kind: DatadogAgent
 metadata:
   name: datadog
+  namespace: openshift-operators # or openshift-operators depending on where the Datadog Operator was deployed
 spec:
   global:
-    site: datadoghq.com
     credentials:
       apiSecret:
-        secretName: datadog-secret
         keyName: api-key
-      appSecret:
         secretName: datadog-secret
+      appSecret:
         keyName: app-key
-  features:
-    logCollection:
-      enabled: true
-      containerCollectAll: true
-    apm:
-      enabled: true
-      hostPortConfig:
-        enabled: true
-    liveContainerCollection:
-      enabled: true
-    liveProcessCollection:
-      enabled: true
+        secretName: datadog-secret
+    criSocketPath: /var/run/crio/crio.sock
+    kubelet:
+      # This is needed if the kubelet certificate is self-signed.
+      # Alternatively, the CA certificate used to sign the kubelet certificate can be mounted.
+      tlsVerify: false
   override:
-    clusterAgent:
-      image:
-        name: gcr.io/datadoghq/cluster-agent:latest
     nodeAgent:
-      image:
-        name: gcr.io/datadoghq/agent:latest
+      hostNetwork: true # In OpenShift 4.0+, set this parameter to get host tags and aliases
+      securityContext:
+        runAsUser: 0
+        seLinuxOptions:
+          level: s0
+          role: system_r
+          type: spc_t
+          user: system_u
+      serviceAccountName: datadog-agent-scc
+    clusterAgent:
+      serviceAccountName: datadog-agent-scc
+      replicas: 2
+      containers:
+        cluster-agent:
+          securityContext:
+            readOnlyRootFilesystem: false
