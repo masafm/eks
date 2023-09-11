@@ -4,10 +4,10 @@
 3. Run az command
 ```
 az aro create --resource-group masafumi-kashiwagi \
---name masafumi-kashiwagi-aro \
+--name masafumi-kashiwagi \
 --vnet masafumi-kashiwagi \
---master-subnet master-subnet \
---worker-subnet worker-subnet \
+--master-subnet aro-master-subnet \
+--worker-subnet aro-worker-subnet \
 --pull-secret @pull-secret.txt
 ```
 
