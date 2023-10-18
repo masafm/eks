@@ -4,7 +4,7 @@ metadata:
   name: datadog
 spec:
   global:
-    clusterName: m75q
+    clusterName: home
     logLevel: debug
     site: datadoghq.com
     credentials:
@@ -23,12 +23,12 @@ spec:
     dogstatsd:
       hostPortConfig:
         enabled: true
-        hostPort: 8125
+        #hostPort: 8125
     apm:
       enabled: true
       hostPortConfig:
         enabled: true
-        hostPort: 8126
+        #hostPort: 8126
     liveContainerCollection:
       enabled: true
     liveProcessCollection:
