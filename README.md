@@ -8,6 +8,8 @@ az aro create --resource-group masafumi-kashiwagi \
 --vnet masafumi-kashiwagi \
 --master-subnet aro-master-subnet \
 --worker-subnet aro-worker-subnet \
+--master-count 1 \
+--worker-count 1 \
 --pull-secret @pull-secret.txt
 ```
 
