@@ -1,0 +1,440 @@
+kind: DatadogAgent
+apiVersion: datadoghq.com/v2alpha1
+metadata:
+  name: datadog
+spec:
+  global:
+    clusterName: k8s
+    logLevel: debug
+    site: datadoghq.com
+    credentials:
+      apiSecret:
+        secretName: datadog-secret
+        keyName: api-key
+      appSecret:
+        secretName: datadog-secret
+        keyName: app-key
+    kubelet:
+      tlsVerify: false
+  features:
+    clusterChecks:
+      enabled: true
+      useClusterChecksRunners: true
+    logCollection:
+      enabled: true
+      containerCollectAll: true
+    dogstatsd:
+      hostPortConfig:
+        enabled: true
+        hostPort: 8125
+    apm:
+      enabled: true
+      hostPortConfig:
+        enabled: true
+        hostPort: 8126
+    liveContainerCollection:
+      enabled: true
+    liveProcessCollection:
+      enabled: true
+    npm:
+      enabled: true
+      collectDNSStats: true
+      enableConntrack: true
+  override:
+    clusterAgent:
+      image:
+        name: gcr.io/datadoghq/cluster-agent:latest
+      extraConfd:
+        configDataMap:
+          snmp.yaml: |-
+            cluster_check: true
+            init_config:
+              loader: core
+              use_device_id_as_hostname: true
+            instances:
+              - ip_address: "169.254.100.1"
+                community_string: "cisco-asa"
+                port: "161"
+              - ip_address: "169.254.100.2"
+                community_string: "f5-big-ip"
+                port: "161"
+              - ip_address: "169.254.100.3"
+                community_string: "yamaha-rtx3500"
+                port: "161"
+                profile: "yamaha"
+          # mysql.yaml: |-
+          #   cluster_check: true
+          #   init_config:
+          #   instances:
+          #     - dbm: true
+          #       host: masafumi-kashiwagi-aurora-mysql-instance-1.c3bw7kcbozbg.ap-northeast-1.rds.amazonaws.com
+          #       port: 3306
+          #       username: datadog
+          #       password: datadog
+          #     - dbm: true
+          #       host: masafumi-kashiwagi-aurora-mysql-instance-1-ap-northeast-1a.c3bw7kcbozbg.ap-northeast-1.rds.amazonaws.com
+          #       port: 3306
+          #       username: datadog
+          #       password: datadog
+          # openmetrics.yaml: |-
+          #   cluster_check: true
+          #   init_config:
+          #   instances:
+          #     - openmetrics_endpoint: http://10.1.223.81:8383/metrics
+          #       namespace: observability                                                                                                                                                                                                               #       metrics":
+          #         - .*
+          #       max_returned_metrics: 100
+      containers:
+        cluster-agent:
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: "0.5"
+              memory: 1Gi
+          env:
+            - name: DD_LOG_PAYLOADS
+              value: "true"
+            # - name: DD_PROXY_HTTP
+            #   value: "http://aws-k8s.ddmasa.com:3128/"
+            # - name: DD_PROXY_HTTPS
+            #   value: "http://aws-k8s.ddmasa.com:3128/"
+            # - name: DD_PROXY_NO_PROXY
+            #   value: "127.0.0.0/8 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 localhost"
+    nodeAgent:
+      image:
+        name: gcr.io/datadoghq/agent:latest-jmx
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/agent: unconfined
+        container.apparmor.security.beta.kubernetes.io/process-agent: unconfined
+        # ad.datadoghq.com/kube-prom-stack-kube-prome-kubelet.checks: |
+        #   {
+        #   "openmetrics": {
+        #     "init_config": {}
+        #     "instances": [
+        #     {
+        #     "openmetrics_endpoint": "http://%%host%%:%%port%%/metrics",
+        #     "max_returned_metrics": "100",
+        #     "namespace": "observability",
+        #     "metrics": [".*"]
+        #     }
+        #     ]
+        #   }
+        #   } 
+      extraConfd:
+        configDataMap:
+          # jmx.yaml: |-
+          #   init_config:
+          #     new_gc_metrics: true
+          #   instances:
+          #     - host: 169.254.100.100
+          #       port: 9012
+          http_check.yaml: |-
+            init_config:
+            instances:
+              - name: 169.254.100.100
+                url: https://169.254.100.100/
+                tls_verify: false
+          syslog.yaml: |-
+            logs:
+              - type: file
+                path: /host/var/log/syslog
+                source: syslog
+                service: syslog
+                tags:
+                  - timezone:jst
+          # tomcat.yaml: |-
+          #   init_config:
+          #     is_jmx: true
+          #     collect_default_metrics: true
+          #     new_gc_metrics: true
+          #   instances:
+          #     - host: 169.254.100.100
+          #       port: 9013
+          #   logs:
+          #     - type: file
+          #       path: /host/var/log/tomcat9/*.out
+          #       source: tomcat
+          #       service: tomcat
+          #     - type: file
+          #       path: /host/var/log/tomcat9/localhost.*.log
+          #       source: tomcat
+          #       service: tomcat
+          #     - type: file
+          #       path: /host/var/log/tomcat9/localhost_access_log.*.txt
+          #       source: tomcat
+          #       service: tomcat
+          apache.yaml: |-
+            init_config:
+            instances:
+              - apache_status_url: http://169.254.100.100/server-status?auto
+                disable_generic_tags: true
+            logs:
+              - type: file
+                path: /host/var/log/apache2/access.log
+                source: apache
+                service: apache
+              - type: file
+                path: /host/var/log/apache2/error.log
+                source: apache
+                service: apache
+      volumes:
+        - name: host-logs
+          hostPath:
+            path: /var/log
+        - name: snmp-profiles
+          configMap:
+            name: snmp-profiles-configmap
+      containers:
+        agent:
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: "0.5"
+              memory: 1Gi
+          volumeMounts:
+            - name: host-logs
+              mountPath: /host/var/log
+            - name: snmp-profiles
+              mountPath: /etc/datadog-agent/conf.d/snmp.d/profiles/
+          env:
+            - name: DD_LOG_PAYLOADS
+              value: "true"
+            - name: DD_LOG_FILE_MAX_SIZE
+              value: "100Mb"
+            - name: DD_LOG_FILE_MAX_ROLLS
+              value: "5"
+            - name: DD_AUTOCONFIG_EXCLUDE_FEATURES
+              value: "docker"
+            # - name: DD_PROXY_HTTP
+            #   value: "http://aws-k8s.ddmasa.com:3128/"
+            # - name: DD_PROXY_HTTPS
+            #   value: "http://aws-k8s.ddmasa.com:3128/"
+            # - name: DD_PROXY_NO_PROXY
+            #   value: "127.0.0.0/8 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 localhost"
+        trace-agent:
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: "0.5"
+              memory: 1Gi
+          env:
+            - name: DD_LOG_PAYLOADS
+              value: "true"
+            # - name: DD_PROXY_HTTP
+            #   value: "http://aws-k8s.ddmasa.com:3128/"
+            # - name: DD_PROXY_HTTPS
+            #   value: "http://aws-k8s.ddmasa.com:3128/"
+            # - name: DD_PROXY_NO_PROXY
+            #   value: "127.0.0.0/8 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 localhost"
+        process-agent:
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: "0.5"
+              memory: 1Gi
+          env:
+            - name: DD_LOG_PAYLOADS
+              value: "true"
+            # - name: DD_PROXY_HTTP
+            #   value: "http://aws-k8s.ddmasa.com:3128/"
+            # - name: DD_PROXY_HTTPS
+            #   value: "http://aws-k8s.ddmasa.com:3128/"
+            # - name: DD_PROXY_NO_PROXY
+            #   value: "127.0.0.0/8 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 localhost"
+        system-probe:
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: "0.5"
+              memory: 1Gi
+          env:
+            - name: DD_LOG_PAYLOADS
+              value: "true"
+            # - name: DD_PROXY_HTTP
+            #   value: "http://aws-k8s.ddmasa.com:3128/"
+            # - name: DD_PROXY_HTTPS
+            #   value: "http://aws-k8s.ddmasa.com:3128/"
+            # - name: DD_PROXY_NO_PROXY
+            #   value: "127.0.0.0/8 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 localhost"
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: snmp-profiles-configmap
+data:
+  _yamaha-if.yaml: |
+    # Generic network interfaces abstract profile.
+    # MIB: IF-MIB
+
+    metadata:
+      interface:
+        fields:
+          name:
+            symbol:
+              OID: 1.3.6.1.2.1.2.2.1.1
+              name: ifName
+          description:
+            symbol:
+              OID: 1.3.6.1.2.1.2.2.1.2
+              name: ifDescr
+          mac_address:
+            symbol:
+              OID: 1.3.6.1.2.1.2.2.1.6
+              name: ifPhysAddress
+              format: mac_address
+          admin_status:
+            symbol:
+              OID: 1.3.6.1.2.1.2.2.1.7
+              name: ifAdminStatus
+          oper_status:
+            symbol:
+              OID: 1.3.6.1.2.1.2.2.1.8
+              name: ifOperStatus
+          # TODO: Impl ip_address
+          alias: # from another table
+            symbol:
+              OID: 1.3.6.1.2.1.31.1.1.1.18
+              name: ifAlias
+        id_tags:
+          - column:
+              OID: 1.3.6.1.2.1.2.2.1.1
+              name: ifName
+            tag: interface
+
+    metrics:
+    - MIB: IF-MIB
+      symbol:
+        OID: 1.3.6.1.2.1.2.1.0
+        name: ifNumber
+
+    - MIB: IF-MIB
+      table:
+        OID: 1.3.6.1.2.1.2.2
+        name: ifTable
+      forced_type: monotonic_count_and_rate
+      symbols:
+      - OID: 1.3.6.1.2.1.2.2.1.14
+        name: ifInErrors
+      - OID: 1.3.6.1.2.1.2.2.1.13
+        name: ifInDiscards
+      - OID: 1.3.6.1.2.1.2.2.1.20
+        name: ifOutErrors
+      - OID: 1.3.6.1.2.1.2.2.1.19
+        name: ifOutDiscards
+      metric_tags:
+      - column:
+          OID: 1.3.6.1.2.1.2.2.1.1
+          name: ifName
+        table: ifXTable
+        tag: interface
+      - column:
+          OID: 1.3.6.1.2.1.31.1.1.1.18
+          name: ifAlias
+        table: ifXTable
+        tag: interface_alias
+    - MIB: IF-MIB
+      table:
+        OID: 1.3.6.1.2.1.2.2
+        name: ifTable
+      symbols:
+      - OID: 1.3.6.1.2.1.2.2.1.7
+        name: ifAdminStatus
+      - OID: 1.3.6.1.2.1.2.2.1.8
+        name: ifOperStatus
+      - OID: 1.3.6.1.2.1.2.2.1.5
+        name: ifSpeed
+      metric_tags:
+      - column:
+          OID: 1.3.6.1.2.1.2.2.1.1
+          name: ifName
+        table: ifXTable
+        tag: interface
+      - column:
+          OID: 1.3.6.1.2.1.31.1.1.1.18
+          name: ifAlias
+        table: ifXTable
+        tag: interface_alias
+    - MIB: IF-MIB
+      table:
+        OID: 1.3.6.1.2.1.31.1.1
+        name: ifXTable
+      forced_type: monotonic_count
+      symbols:
+      - OID: 1.3.6.1.2.1.2.2.1.11
+        name: ifHCInUcastPkts
+      - OID: 1.3.6.1.2.1.31.1.1.1.8
+        name: ifHCInMulticastPkts
+      - OID: 1.3.6.1.2.1.31.1.1.1.9
+        name: ifHCInBroadcastPkts
+      - OID: 1.3.6.1.2.1.2.2.1.17
+        name: ifHCOutUcastPkts
+      - OID: 1.3.6.1.2.1.31.1.1.1.12
+        name: ifHCOutMulticastPkts
+      - OID: 1.3.6.1.2.1.31.1.1.1.13
+        name: ifHCOutBroadcastPkts
+      metric_tags:
+      - column:
+          OID: 1.3.6.1.2.1.2.2.1.1
+          name: ifName
+        tag: interface
+      - column:
+          OID: 1.3.6.1.2.1.31.1.1.1.18
+          name: ifAlias
+        table: ifXTable
+        tag: interface_alias
+    - MIB: IF-MIB
+      table:
+        OID: 1.3.6.1.2.1.31.1.1
+        name: ifXTable
+      forced_type: monotonic_count_and_rate
+      symbols:
+      - OID: 1.3.6.1.2.1.2.2.1.10
+        name: ifHCInOctets
+      - OID: 1.3.6.1.2.1.2.2.1.16
+        name: ifHCOutOctets
+      metric_tags:
+      - column:
+          OID: 1.3.6.1.2.1.2.2.1.1
+          name: ifName
+        tag: interface
+      - column:
+          OID: 1.3.6.1.2.1.31.1.1.1.18
+          name: ifAlias
+        table: ifXTable
+        tag: interface_alias
+    - MIB: IF-MIB
+      table:
+        OID: 1.3.6.1.2.1.31.1.1
+        name: ifXTable
+      symbols:
+      - OID: 1.3.6.1.2.1.31.1.1.1.15
+        name: ifHighSpeed
+      metric_tags:
+      - column:
+          OID: 1.3.6.1.2.1.2.2.1.1
+          name: ifName
+        tag: interface
+      - column:
+          OID: 1.3.6.1.2.1.31.1.1.1.18
+          name: ifAlias
+        table: ifXTable
+        tag: interface_alias
+  yamaha.yaml: |
+    # Generic profile for network devices
+    #
+
+    extends:
+      - _base.yaml
+      - _yamaha-if.yaml
+
+    sysobjectid: 1.3.6.1.4.1.3375.*

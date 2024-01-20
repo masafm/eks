@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: rollout-blue-green
+spec:
+  replicas: 2
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: rollout-blue-green
+  template:
+    metadata:
+      labels:
+        app: rollout-blue-green
+    spec:
+      containers:
+        - name: rollout-blue-green-sample
+          image: httpd:latest
+          ports:
+            - containerPort: 80
+  strategy:
+    blueGreen:
+      activeService: rollout-blue-green-svc-active
+      previewService: rollout-blue-green-svc-preview
+      autoPromotionEnabled: false

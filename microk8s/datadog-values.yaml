@@ -1,0 +1,36 @@
+clusterAgent:
+  env:
+    - name: DD_PROXY_HTTPS
+      value: "http://aws-k8s.ddmasa.com:3128"
+    - name: DD_PROXY_HTTP
+      value: "http://aws-k8s.ddmasa.com:3128"
+    - name: DD_PROXY_NO_PROXY
+      value: "10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 169.254.0.0/16 .verrazzano-monitoring"
+    - name: DD_LOG_LEVEL
+      value: debug
+    - name: DD_LOG_FILE_MAX_SIZE
+      value: 100Mb
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  site: datadoghq.com
+# clusterAgent:
+#   image:
+#     tag: latest
+# agents:
+#   image:
+#     tag: latest
+# clusterChecksRunner:
+#   image:
+#     tag: latest
+  env:
+    - name: DD_PROXY_HTTPS
+      value: "http://aws-k8s.ddmasa.com:3128"
+    - name: DD_PROXY_HTTP
+      value: "http://aws-k8s.ddmasa.com:3128"
+    - name: DD_PROXY_NO_PROXY
+      value: "10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 169.254.0.0/16 .verrazzano-monitoring"
+    - name: DD_LOG_LEVEL
+      value: debug
+    - name: DD_LOG_FILE_MAX_SIZE
+      value: 100Mb
