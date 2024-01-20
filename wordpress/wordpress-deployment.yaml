@@ -47,7 +47,7 @@ spec:
         tier: frontend
       annotations:
         ad.datadoghq.com/wordpress.checks: >-
-          {"apache": {"instances": [{"apache_status_url": "http://%%host%%:30080/server-status?auto"}]}}
+          {"apache": {"instances": [{"apache_status_url": "http://wordpress:30080/server-status?auto"}]}}
     spec:
       containers:
       - image: public.ecr.aws/b1o7r7e0/masafumi.kashiwagi/wordpress:20240118
