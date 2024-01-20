@@ -43,6 +43,9 @@ spec:
       labels:
         app: wordpress
         tier: mysql
+      annotations:
+        ad.datadoghq.com/mysql.checks: >-
+          {"mysql": {"instances": [{"dbm": "true", "host": "%%host%%", "port": "3306", "username": "datadog", "password": "datadog", "reported_hostname": "aws-docker", "query_samples": {"collection_interval": "0.1"}}]}}
     spec:
       containers:
       - image: public.ecr.aws/b1o7r7e0/masafumi.kashiwagi/wordpress_db:20240118

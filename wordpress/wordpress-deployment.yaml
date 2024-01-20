@@ -6,12 +6,13 @@ metadata:
     app: wordpress
 spec:
   ports:
-    - port: 80
+    - port: 30080
       nodePort: 30080
+      targetPort: 80
   selector:
     app: wordpress
     tier: frontend
-  type: LoadBalancer
+  type: NodePort
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -44,6 +45,9 @@ spec:
       labels:
         app: wordpress
         tier: frontend
+      annotations:
+        ad.datadoghq.com/wordpress.checks: >-
+          {"apache": {"instances": [{"apache_status_url": "http://%%host%%:30080/server-status?auto"}]}}
     spec:
       containers:
       - image: public.ecr.aws/b1o7r7e0/masafumi.kashiwagi/wordpress:20240118
@@ -58,6 +62,18 @@ spec:
               key: password
         - name: WORDPRESS_DB_USER
           value: wordpress
+        - name: DD_AGENT_HOST
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: DD_SERVICE
+          value: wordpress
+        - name: DD_ENV
+          value: dev
+        - name: DD_VERSION
+          value: "3.0"
+        - name: DD_DBM_PROPAGATION_MODE
+          value: full
         ports:
         - containerPort: 80
           name: wordpress

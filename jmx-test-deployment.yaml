@@ -43,7 +43,7 @@ spec:
           }
     spec:
       containers:
-      - image: public.ecr.aws/b1o7r7e0/masafumi.kashiwagi/php-fpm:20231220-1
+      - image: public.ecr.aws/b1o7r7e0/masafumi.kashiwagi/php-fpm:20240118
         name: php-fpm-with-ddtracer
         resources:
             limits:
@@ -66,11 +66,11 @@ spec:
         - name: CURL_COUNT
           value: "2"
         - name: CURL_TARGET_URL
-          value: "http://localhost:81/nginx_status"
+          value: "http://wordpress:30080/"
         ports:
         - containerPort: 9000
           name: php-fpm
-      - image: public.ecr.aws/b1o7r7e0/masafumi.kashiwagi/nginx:20231220-3
+      - image: public.ecr.aws/b1o7r7e0/masafumi.kashiwagi/nginx:20240118
         name: nginx
         resources:
             limits:
