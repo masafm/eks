@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: tomcat
+  labels:
+    app: tomcat
+spec:
+  ports:
+    - port: 8080
+      nodePort: 31080
+      targetPort: 8080
+  selector:
+    app: tomcat
+    tier: frontend
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tomcat
+  labels:
+    app: tomcat
+spec:
+  selector:
+    matchLabels:
+      app: tomcat
+      tier: frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: tomcat
+        tier: frontend
+      annotations:
+        ad.datadoghq.com/tomcat.checks: >-
+          {"tomcat": {"init_config": {"is_jmx": true, "collect_default_metrics": true, "new_gc_metrics": true}, "instances": [{"host": "%%host%%", "port": 9012}]}}
+        ad.datadoghq.com/tomcat.logss: >-
+          [{"source": "java", "service": "tomcat"}]
+    spec:
+      containers:
+      - image: public.ecr.aws/b1o7r7e0/masafumi.kashiwagi/tomcat:20240118
+        name: tomcat
+        env:
+        - name: DD_AGENT_HOST
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: DD_SERVICE
+          value: tomcat
+        - name: DD_ENV
+          value: dev
+        - name: DD_VERSION
+          value: "3.0"
+        - name: TARGET_URL
+          value: http://wordpress:30080/
+        ports:
+        - containerPort: 8080
+          name: tomcat
