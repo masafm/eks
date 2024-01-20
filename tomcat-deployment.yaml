@@ -49,7 +49,7 @@ spec:
         - name: DD_SERVICE
           value: tomcat
         - name: DD_ENV
-          value: dev
+          value: k8s
         - name: DD_VERSION
           value: "3.0"
         - name: TARGET_URL

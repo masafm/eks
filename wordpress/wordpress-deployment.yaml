@@ -69,7 +69,7 @@ spec:
         - name: DD_SERVICE
           value: wordpress
         - name: DD_ENV
-          value: dev
+          value: k8s
         - name: DD_VERSION
           value: "3.0"
         - name: DD_DBM_PROPAGATION_MODE

@@ -58,7 +58,7 @@ spec:
             fieldRef:
               fieldPath: status.hostIP
         - name: DD_ENV
-          value: dev
+          value: k8s
         # - name: DD_DOGSTATSD_URL
         #   value: "http://192.168.32.33:8125"
         # - name: DD_TRACE_AGENT_URL
@@ -85,7 +85,7 @@ spec:
             fieldRef:
               fieldPath: status.hostIP
         - name: DD_ENV
-          value: dev
+          value: k8s
         - name: PHP_FPM_ADDR
           value: localhost:9000
         ports:
@@ -110,7 +110,7 @@ spec:
             fieldRef:
               fieldPath: status.hostIP
         - name: DD_ENV
-          value: dev
+          value: k8s
         ports:
         - containerPort: 9012
           name: jmx-test
