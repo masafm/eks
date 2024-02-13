@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: sample-cronjob
+spec:
+  schedule: "*/1 * * * *" #cronと同じ書式で実行時間を指定
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: sample-cronjob
+            image: centos:latest
+            command:
+            - sh
+            - -c
+            args:
+            - date
+          restartPolicy: Never
