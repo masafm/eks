@@ -218,6 +218,10 @@ spec:
               value: "5"
             - name: DD_AUTOCONFIG_EXCLUDE_FEATURES
               value: "docker"
+            - name: DD_LOGS_CONFIG_AUTO_MULTI_LINE_DETECTION
+              value: "true"
+            - name: DD_LOGS_CONFIG_AUTO_MULTI_LINE_EXTRA_PATTERNS
+              value: "\\d{4}/(0?[1-9]|1[012])/(0?[1-9]|[12][0-9]|3[01])"
             # - name: DD_PROXY_HTTP
             #   value: "http://aws-k8s.ddmasa.com:3128/"
             # - name: DD_PROXY_HTTPS

@@ -1,0 +1,25 @@
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: logs-test-deployment
+  labels:
+    app: logs-test
+spec:
+  selector:
+    matchLabels:
+      app: logs-test
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: logs-test
+    spec:
+      containers:
+        - image: centos:latest
+          name: logs-test
+          command:
+          - sh
+          - -c
+          args:
+            - while true;do echo -e $(date "+%Y/%m/%d %H:%M:%S")' test ccccc\n'$(date "+%Y/%m/%d %H:%M:%S")' test aaaa\nsdfasdfa\nfdasdfasd\nsdfasdfasdfasdf\n'$(date "+%Y/%m/%d %H:%M:%S")' test bbbb';done
