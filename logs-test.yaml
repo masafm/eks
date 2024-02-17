@@ -22,4 +22,4 @@ spec:
           - sh
           - -c
           args:
-            - while true;do echo -e $(date "+%Y/%m/%d %H:%M:%S")' test ccccc\n'$(date "+%Y/%m/%d %H:%M:%S")' test aaaa\nsdfasdfa\nfdasdfasd\nsdfasdfasdfasdf\n'$(date "+%Y/%m/%d %H:%M:%S")' test bbbb';done
+            - while true;do echo -e '{"host":"hoge","message":"moge"}'"\n"'{"message":"moge2"}';sleep 1;done
