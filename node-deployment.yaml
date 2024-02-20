@@ -1,0 +1,55 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: node
+  labels:
+    app: node
+spec:
+  ports:
+    - port: 3000
+      nodePort: 31081
+      targetPort: 3000
+  selector:
+    app: node-test
+  type: NodePort
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: node-deployment
+  labels:
+    app: node-test
+spec:
+  selector:
+    matchLabels:
+      app: node-test
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: node-test
+    spec:
+      containers:
+        - image: public.ecr.aws/b1o7r7e0/masafumi.kashiwagi/node:20240220-2
+          name: node-test
+          env:
+          - name: DD_AGENT_HOST
+            valueFrom:
+              fieldRef:
+                fieldPath: status.hostIP
+          - name: DD_ENV
+            value: k8s
+          - name: DD_SERVICE
+            value: node
+          - name: DD_VERSION
+            value: "1.0"
+          - name: DD_RUNTIME_METRICS_ENABLED
+            value: "true"
+          - name: DD_TRACE_DEBUG
+            value: "true"
+          - name: DD_TAGS
+            value: "test:hoge"
+          ports:
+          - containerPort: 3000
+            name: node
