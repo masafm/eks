@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: test-app
+ namespace: default
+spec:
+ selector:
+   matchLabels:
+     app: test-app
+ replicas: 1
+ template:
+   metadata:
+     labels:
+       app: test-app
+     name: test-pod
+   spec:
+     serviceAccountName: datadog-agent
+     containers:
+     - name: test-app
+       image: centos:latest
+       command:
+       - sh
+       - -c
+       args:
+       - while true;do date;sleep 1;done
+     - image: datadog/agent:latest
+       name: datadog-agent
+       env:
+       - name: DD_API_KEY
+         valueFrom:
+           secretKeyRef:
+             name: datadog-secret
+             key: api-key
+       - name: DD_SITE
+         value: "datadoghq.com"
+       - name: DD_EKS_FARGATE
+         value: "true"
+       - name: DD_CLUSTER_NAME
+         value: "fargate-test"
+       - name: DD_KUBERNETES_KUBELET_NODENAME
+         valueFrom:
+           fieldRef:
+             apiVersion: v1
+             fieldPath: spec.nodeName
+       - name: DD_CLUSTER_AGENT_ENABLED
+         value: "true"
+       - name: DD_CLUSTER_AGENT_AUTH_TOKEN
+         valueFrom:
+           secretKeyRef:
+             name: datadog-cluster-agent-cluster-agent
+             key: token
+       - name: DD_CLUSTER_AGENT_URL
+         value: https://datadog-cluster-agent-cluster-agent.default.svc.cluster.local:5005
+       - name: DD_ORCHESTRATOR_EXPLORER_ENABLED # Required to get Kubernetes resources view
+         value: "true"
+       resources:
+         requests:
+           memory: "256Mi"
+           cpu: "200m"
+         limits:
+           memory: "256Mi"
+           cpu: "200m"

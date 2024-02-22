@@ -1,0 +1,13 @@
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  clusterName: fargate-test
+agents:
+  enabled: false
+clusterAgent:
+  enabled: true
+  replicas: 2
+  createPodDisruptionBudget: true
+  env:
+    - name: DD_EKS_FARGATE
+      value: "true"
