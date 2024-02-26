@@ -1,0 +1,41 @@
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  site: datadoghq.com
+  clusterName: masafumi-kashiwagi-eks-osaka
+agents:
+  image:
+    tag: 7.51.0
+  # env:
+  #   - name: DD_PROXY_HTTPS
+  #     value: "http://aws-k8s.ddmasa.com:3128"
+  #   - name: DD_PROXY_HTTP
+  #     value: "http://aws-k8s.ddmasa.com:3128"
+  #   - name: DD_PROXY_NO_PROXY
+  #     value: "10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 169.254.0.0/16 .verrazzano-monitoring"
+  #   - name: DD_LOG_LEVEL
+  #     value: debug
+  #   - name: DD_LOG_FILE_MAX_SIZE
+  #     value: 100Mb
+
+clusterAgent:
+  image:
+    tag: 7.51.0
+  enabled: true
+  replicas: 2
+  createPodDisruptionBudget: true
+  token: abcdefghijklmnopqrstuvwxyz123456789
+#   env:
+#     - name: DD_PROXY_HTTPS
+#       value: "http://aws-k8s.ddmasa.com:3128"
+#     - name: DD_PROXY_HTTP
+#       value: "http://aws-k8s.ddmasa.com:3128"
+#     - name: DD_PROXY_NO_PROXY
+#       value: "10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 169.254.0.0/16 .verrazzano-monitoring"
+#     - name: DD_LOG_LEVEL
+#       value: debug
+#     - name: DD_LOG_FILE_MAX_SIZE
+#       value: 100Mb
+# clusterChecksRunner:
+#   image:
+#     tag: latest

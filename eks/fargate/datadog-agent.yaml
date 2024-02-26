@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
  name: test-app
- namespace: default
+ namespace: fargate
 spec:
  selector:
    matchLabels:
@@ -36,7 +36,7 @@ spec:
        - name: DD_EKS_FARGATE
          value: "true"
        - name: DD_CLUSTER_NAME
-         value: "fargate-test"
+         value: "masafumi-kashiwagi-eks-osaka"
        - name: DD_KUBERNETES_KUBELET_NODENAME
          valueFrom:
            fieldRef:
@@ -51,7 +51,7 @@ spec:
          #     name: datadog-cluster-agent-cluster-agent
          #     key: token
        - name: DD_CLUSTER_AGENT_URL
-         value: https://datadog-cluster-agent-cluster-agent.default.svc.cluster.local:5005
+         value: https://datadog-cluster-agent.default.svc.cluster.local:5005
        - name: DD_ORCHESTRATOR_EXPLORER_ENABLED # Required to get Kubernetes resources view
          value: "true"
        resources:
