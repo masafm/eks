@@ -8,6 +8,7 @@ clusterAgent:
   enabled: true
   replicas: 2
   createPodDisruptionBudget: true
+  token: abcdefghijklmnopqrstuvwxyz123456789
   env:
     - name: DD_EKS_FARGATE
       value: "true"

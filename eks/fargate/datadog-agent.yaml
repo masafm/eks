@@ -45,10 +45,11 @@ spec:
        - name: DD_CLUSTER_AGENT_ENABLED
          value: "true"
        - name: DD_CLUSTER_AGENT_AUTH_TOKEN
-         valueFrom:
-           secretKeyRef:
-             name: datadog-cluster-agent-cluster-agent
-             key: token
+         value: "abcdefghijklmnopqrstuvwxyz123456789"
+         # valueFrom:
+         #   secretKeyRef:
+         #     name: datadog-cluster-agent-cluster-agent
+         #     key: token
        - name: DD_CLUSTER_AGENT_URL
          value: https://datadog-cluster-agent-cluster-agent.default.svc.cluster.local:5005
        - name: DD_ORCHESTRATOR_EXPLORER_ENABLED # Required to get Kubernetes resources view
