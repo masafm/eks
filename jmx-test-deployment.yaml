@@ -46,7 +46,7 @@ spec:
               memory: 1Gi
         env:
         - name: TARGET_URL
-          value: "http://php-fpm/"
+          value: "http://tomcat:8080/"
         - name: DD_AGENT_HOST
           valueFrom:
             fieldRef:
