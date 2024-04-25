@@ -21,8 +21,13 @@ managedNodeGroups:
   # Windows
   - name: windows-ng
     amiFamily: WindowsServer2019FullContainer
-    minSize: 0
-    maxSize: 1
+    instanceType: c5.2xlarge
+    minSize: 1
+    desiredCapacity: 1
+    volumeSize: 100
+    ssh:
+      allow: true 
+      publicKeyName: masafumi.kashiwagi
 
 # Fargate
 fargateProfiles:
