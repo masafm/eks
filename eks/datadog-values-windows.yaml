@@ -1,11 +1,27 @@
+targetSystem: windows
 datadog:
   apiKeyExistingSecret: datadog-secret
   appKeyExistingSecret: datadog-secret
   site: datadoghq.com
   clusterName: masafumi-kashiwagi-eks-osaka
+  kubeStateMetricsEnabled: false
+  confd: 
+    windows_performance_counters.yaml: |-
+      init_config:
+      instances:
+        - metrics:
+            LogicalDisk:
+              name: logicaldisk
+              tag_name: disk:C
+              counters:
+                - '% Free Space':
+                    name: percent_disk_free_space
+                    type: rate
+
 agents:
   image:
-    tag: 7.52.1
+    tag: 7-servercore
+    doNotCheckTag: true
   # env:
   #   - name: DD_PROXY_HTTPS
   #     value: "http://aws-k8s.ddmasa.com:3128"
@@ -18,12 +34,12 @@ agents:
   #   - name: DD_LOG_FILE_MAX_SIZE
   #     value: 100Mb
 
-clusterAgent:
-  image:
-    tag: 7.51.0
-  enabled: true
-  replicas: 2
-  createPodDisruptionBudget: true
+# clusterAgent:
+#   image:
+#     tag: 7.51.0
+#   enabled: true
+#   replicas: 2
+#   createPodDisruptionBudget: true
 #   token: abcdefghijklmnopqrstuvwxyz123456789
 #   env:
 #     - name: DD_PROXY_HTTPS
@@ -39,3 +55,13 @@ clusterAgent:
 # clusterChecksRunner:
 #   image:
 #     tag: latest
+
+existingClusterAgent:
+  join: true
+  serviceName: "datadog-agent-cluster-agent" # from the first Datadog Helm chart
+  tokenSecretName: "datadog-agent-cluster-agent" # from the first Datadog Helm chart
+
+# Disable datadogMetrics deployment since it should have been already deployed with the first chart.
+datadog-crds:
+  crds:
+    datadogMetrics: false
