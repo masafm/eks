@@ -5,7 +5,7 @@ metadata:
 spec:
   global:
     clusterName: k8s
-    logLevel: debug
+#    logLevel: debug
     site: datadoghq.com
     credentials:
       apiSecret:
@@ -43,7 +43,7 @@ spec:
   override:
     clusterAgent:
       image:
-        name: gcr.io/datadoghq/cluster-agent:7.50.3
+        name: gcr.io/datadoghq/cluster-agent:7.54.0
       extraConfd:
         configDataMap:
           my_check.yaml: |-
@@ -109,7 +109,7 @@ spec:
             #   value: "127.0.0.0/8 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 localhost"
     nodeAgent:
       image:
-        name: gcr.io/datadoghq/agent:7.50.3-jmx
+        name: gcr.io/datadoghq/agent:7.54.0-jmx
       annotations:
         container.apparmor.security.beta.kubernetes.io/agent: unconfined
         container.apparmor.security.beta.kubernetes.io/process-agent: unconfined
@@ -135,6 +135,10 @@ spec:
           #   instances:
           #     - host: 169.254.100.100
           #       port: 9012
+          kubelet.yaml: |-
+            init_config:
+            instances:
+              - min_collection_interval: 1
           http_check.yaml: |-
             init_config:
             instances:
@@ -197,10 +201,10 @@ spec:
         agent:
           resources:
             limits:
-              cpu: "2"
+              cpu: "4"
               memory: 2Gi
             requests:
-              cpu: "0.5"
+              cpu: "4"
               memory: 1Gi
           volumeMounts:
             - name: host-logs
@@ -222,6 +226,8 @@ spec:
               value: "true"
             - name: DD_LOGS_CONFIG_AUTO_MULTI_LINE_EXTRA_PATTERNS
               value: "\\d{4}/(0?[1-9]|1[012])/(0?[1-9]|[12][0-9]|3[01])"
+            - name: DD_CHECKS_TAG_CARDINALITY
+              value: "orchestrator"
             # - name: DD_PROXY_HTTP
             #   value: "http://aws-k8s.ddmasa.com:3128/"
             # - name: DD_PROXY_HTTPS
