@@ -9,6 +9,8 @@ az aro create --resource-group masafumi-kashiwagi \
 --master-subnet aro-master-subnet \
 --worker-subnet aro-worker-subnet \
 --worker-count 3 \
+--apiserver-visibility Private \
+--ingress-visibility Private \
 --pull-secret @pull-secret.txt
 ```
 
@@ -26,3 +28,4 @@ FirewallPip api.xxx.japaneast.aroapp.io
 * [How to use operators](https://learn.microsoft.com/en-us/azure/openshift/tutorial-create-cluster#get-a-red-hat-pull-secret-optional)
 * [How to access Azure public LB behind Azure firewwall](https://learn.microsoft.com/ja-jp/azure/firewall/integrate-lb)
 * [How to install Datadog Agent](https://github.com/DataDog/datadog-operator/blob/main/docs/install-openshift.md)
+* [Create an Azure Red Hat OpenShift 4 private cluster](https://learn.microsoft.com/en-us/azure/openshift/howto-create-private-cluster-4x)
