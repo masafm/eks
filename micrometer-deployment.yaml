@@ -1,39 +1,39 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: tomcat-micrometer
+  name: micrometer
   labels:
-    app: tomcat-micrometer
+    app: micrometer
 spec:
   ports:
     - port: 9090
       nodePort: 31090
       targetPort: 9090
   selector:
-    app: tomcat-micrometer
+    app: micrometer
     tier: frontend
   type: NodePort
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tomcat-micrometer-deployment
+  name: micrometer-deployment
   labels:
-    app: tomcat-micrometer
+    app: micrometer
 spec:
   selector:
     matchLabels:
-      app: tomcat-micrometer
+      app: micrometer
       tier: frontend
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: tomcat-micrometer
+        app: micrometer
         tier: frontend
       annotations:
-        ad.datadoghq.com/tomcat-micrometer.checks: >-
+        ad.datadoghq.com/micrometer.checks: >-
           {"openmetrics": {
             "init_config": {},
             "instances": [{
@@ -229,19 +229,19 @@ spec:
             "tag_by_endpoint": false
             }
             ]}}
-        ad.datadoghq.com/tomcat-micrometer.logs: >-
+        ad.datadoghq.com/micrometer.logs: >-
           [{"source": "java", "service": "tomcat"}]
     spec:
       containers:
       - image: public.ecr.aws/b1o7r7e0/masafumi.kashiwagi/tomcat:20240118-micrometer
-        name: tomcat-micrometer
+        name: micrometer
         env:
         - name: DD_AGENT_HOST
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
         - name: DD_SERVICE
-          value: tomcat-micrometer
+          value: micrometer
         - name: DD_ENV
           value: k8s
         - name: DD_VERSION
