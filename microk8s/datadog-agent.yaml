@@ -43,7 +43,7 @@ spec:
   override:
     clusterAgent:
       image:
-        name: gcr.io/datadoghq/cluster-agent:7.54.0
+        name: gcr.io/datadoghq/cluster-agent:7.55.1
       extraConfd:
         configDataMap:
           my_check.yaml: |-
@@ -109,7 +109,7 @@ spec:
             #   value: "127.0.0.0/8 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 localhost"
     nodeAgent:
       image:
-        name: gcr.io/datadoghq/agent:7.54.0-jmx
+        name: gcr.io/datadoghq/agent:7.55.1-jmx
       annotations:
         container.apparmor.security.beta.kubernetes.io/agent: unconfined
         container.apparmor.security.beta.kubernetes.io/process-agent: unconfined
