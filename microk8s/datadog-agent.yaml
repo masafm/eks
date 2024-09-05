@@ -5,7 +5,7 @@ metadata:
 spec:
   global:
     clusterName: k8s
-#    logLevel: debug
+    logLevel: debug
     site: datadoghq.com
     credentials:
       apiSecret:
@@ -197,6 +197,19 @@ spec:
         - name: my-check
           configMap:
             name: my-check-configmap
+      env:
+        - name: DD_LOG_PAYLOADS
+          value: "true"
+        - name: DD_LOG_FILE_MAX_SIZE
+          value: "100Mb"
+        - name: DD_LOG_FILE_MAX_ROLLS
+          value: "5"
+        # - name: DD_PROXY_HTTP
+        #   value: "http://aws-k8s.ddmasa.com:3128/"
+        # - name: DD_PROXY_HTTPS
+        #   value: "http://aws-k8s.ddmasa.com:3128/"
+        # - name: DD_PROXY_NO_PROXY
+        #   value: "127.0.0.0/8 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 localhost"
       containers:
         agent:
           resources:
@@ -214,12 +227,6 @@ spec:
             - name: my-check
               mountPath: /etc/datadog-agent/checks.d/
           env:
-            - name: DD_LOG_PAYLOADS
-              value: "true"
-            - name: DD_LOG_FILE_MAX_SIZE
-              value: "100Mb"
-            - name: DD_LOG_FILE_MAX_ROLLS
-              value: "5"
             - name: DD_AUTOCONFIG_EXCLUDE_FEATURES
               value: "docker"
             - name: DD_LOGS_CONFIG_AUTO_MULTI_LINE_DETECTION
@@ -228,12 +235,6 @@ spec:
               value: "\\d{4}/(0?[1-9]|1[012])/(0?[1-9]|[12][0-9]|3[01])"
             - name: DD_CHECKS_TAG_CARDINALITY
               value: "orchestrator"
-            # - name: DD_PROXY_HTTP
-            #   value: "http://aws-k8s.ddmasa.com:3128/"
-            # - name: DD_PROXY_HTTPS
-            #   value: "http://aws-k8s.ddmasa.com:3128/"
-            # - name: DD_PROXY_NO_PROXY
-            #   value: "127.0.0.0/8 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 localhost"
         trace-agent:
           resources:
             limits:
@@ -242,15 +243,6 @@ spec:
             requests:
               cpu: "0.5"
               memory: 1Gi
-          env:
-            - name: DD_LOG_PAYLOADS
-              value: "true"
-            # - name: DD_PROXY_HTTP
-            #   value: "http://aws-k8s.ddmasa.com:3128/"
-            # - name: DD_PROXY_HTTPS
-            #   value: "http://aws-k8s.ddmasa.com:3128/"
-            # - name: DD_PROXY_NO_PROXY
-            #   value: "127.0.0.0/8 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 localhost"
         process-agent:
           resources:
             limits:
@@ -259,15 +251,6 @@ spec:
             requests:
               cpu: "0.5"
               memory: 1Gi
-          env:
-            - name: DD_LOG_PAYLOADS
-              value: "true"
-            # - name: DD_PROXY_HTTP
-            #   value: "http://aws-k8s.ddmasa.com:3128/"
-            # - name: DD_PROXY_HTTPS
-            #   value: "http://aws-k8s.ddmasa.com:3128/"
-            # - name: DD_PROXY_NO_PROXY
-            #   value: "127.0.0.0/8 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 localhost"
         system-probe:
           resources:
             limits:
@@ -276,15 +259,6 @@ spec:
             requests:
               cpu: "0.5"
               memory: 1Gi
-          env:
-            - name: DD_LOG_PAYLOADS
-              value: "true"
-            # - name: DD_PROXY_HTTP
-            #   value: "http://aws-k8s.ddmasa.com:3128/"
-            # - name: DD_PROXY_HTTPS
-            #   value: "http://aws-k8s.ddmasa.com:3128/"
-            # - name: DD_PROXY_NO_PROXY
-            #   value: "127.0.0.0/8 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 localhost"
 ---
 kind: ConfigMap
 apiVersion: v1

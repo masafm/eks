@@ -14,6 +14,8 @@ spec:
     metadata:
       labels:
         app: logs-test
+      annotations:
+        ad.datadoghq.com/logs-test.logs: '[{"source":"portal-customer", "service":"portal-customer"}]'
     spec:
       containers:
         - image: centos:latest
