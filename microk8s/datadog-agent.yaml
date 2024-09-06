@@ -4,7 +4,7 @@ metadata:
   name: datadog
 spec:
   global:
-    clusterName: k8s
+    clusterName: microk8s
     logLevel: debug
     site: datadoghq.com
     credentials:
@@ -67,28 +67,6 @@ spec:
                 community_string: "yamaha-rtx3500"
                 port: "161"
                 profile: "yamaha"
-          # mysql.yaml: |-
-          #   cluster_check: true
-          #   init_config:
-          #   instances:
-          #     - dbm: true
-          #       host: masafumi-kashiwagi-aurora-mysql-instance-1.c3bw7kcbozbg.ap-northeast-1.rds.amazonaws.com
-          #       port: 3306
-          #       username: datadog
-          #       password: datadog
-          #     - dbm: true
-          #       host: masafumi-kashiwagi-aurora-mysql-instance-1-ap-northeast-1a.c3bw7kcbozbg.ap-northeast-1.rds.amazonaws.com
-          #       port: 3306
-          #       username: datadog
-          #       password: datadog
-          # openmetrics.yaml: |-
-          #   cluster_check: true
-          #   init_config:
-          #   instances:
-          #     - openmetrics_endpoint: http://10.1.223.81:8383/metrics
-          #       namespace: observability                                                                                                                                                                                                               #       metrics":
-          #         - .*
-          #       max_returned_metrics: 100
       containers:
         cluster-agent:
           resources:
@@ -114,28 +92,8 @@ spec:
       annotations:
         container.apparmor.security.beta.kubernetes.io/agent: unconfined
         container.apparmor.security.beta.kubernetes.io/process-agent: unconfined
-        # ad.datadoghq.com/kube-prom-stack-kube-prome-kubelet.checks: |
-        #   {
-        #   "openmetrics": {
-        #     "init_config": {}
-        #     "instances": [
-        #     {
-        #     "openmetrics_endpoint": "http://%%host%%:%%port%%/metrics",
-        #     "max_returned_metrics": "100",
-        #     "namespace": "observability",
-        #     "metrics": [".*"]
-        #     }
-        #     ]
-        #   }
-        #   } 
       extraConfd:
         configDataMap:
-          # jmx.yaml: |-
-          #   init_config:
-          #     new_gc_metrics: true
-          #   instances:
-          #     - host: 169.254.100.100
-          #       port: 9012
           kubelet.yaml: |-
             init_config:
             instances:
@@ -145,49 +103,6 @@ spec:
             instances:
               - name: wordpress
                 url: http://wordpress:30080/
-          # syslog.yaml: |-
-          #   logs:
-          #     - type: file
-          #       path: /host/var/log/syslog
-          #       source: syslog
-          #       service: syslog
-          #       tags:
-          #         - timezone:jst
-          # tomcat.yaml: |-
-          #   init_config:
-          #     is_jmx: true
-          #     collect_default_metrics: true
-          #     new_gc_metrics: true
-          #   instances:
-          #     - host: 169.254.100.100
-          #       port: 9013
-          #   logs:
-          #     - type: file
-          #       path: /host/var/log/tomcat9/*.out
-          #       source: tomcat
-          #       service: tomcat
-          #     - type: file
-          #       path: /host/var/log/tomcat9/localhost.*.log
-          #       source: tomcat
-          #       service: tomcat
-          #     - type: file
-          #       path: /host/var/log/tomcat9/localhost_access_log.*.txt
-          #       source: tomcat
-          #       service: tomcat
-          # apache.yaml: |-
-          #   init_config:
-          #   instances:
-          #     - apache_status_url: http://169.254.100.100/server-status?auto
-          #       disable_generic_tags: true
-          #   logs:
-          #     - type: file
-          #       path: /host/var/log/apache2/access.log
-          #       source: apache
-          #       service: apache
-          #     - type: file
-          #       path: /host/var/log/apache2/error.log
-          #       source: apache
-          #       service: apache
       volumes:
         - name: host-logs
           hostPath:
@@ -199,6 +114,8 @@ spec:
           configMap:
             name: my-check-configmap
       env:
+        - name: DD_HOSTNAME
+          value: "aws-k8s"
         - name: DD_LOG_PAYLOADS
           value: "true"
         - name: DD_LOG_FILE_MAX_SIZE
